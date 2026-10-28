@@ -11,8 +11,8 @@ const { searchNotes, updateNote, deleteNote } = require("../controllers/NoteCont
 
 router.post("/signup", signup);
 router.post("/login", login);
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password/:token", resetPassword);
+router.post("/auth/forgot-password", forgotPassword);
+
 
 
 module.exports = router;

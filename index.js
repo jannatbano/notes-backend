@@ -5,6 +5,7 @@ const router = require("./router/UserRouter");
 const noteRouter = require("./router/NoteRouter")
 const app = express();
 const cors = require("cors");
+const dotenv = require("dotenv").config();
 app.use(cors());
 
 

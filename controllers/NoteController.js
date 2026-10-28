@@ -5,7 +5,7 @@ const { default: mongoose } = require('mongoose');
 const addNote = async (req,res)=>{
     try{
         const  {title,content}= req.body;
-        const note = await Note.create({title,content});
+        const note = await Note.create({title,content,user:req.user.id});
         res.status(201).json({message:"Note added",note});
     }catch(error){
         res.status(500).json({message:error.message})
@@ -14,7 +14,7 @@ const addNote = async (req,res)=>{
 
 const getNotes = async (req, res) => {
   try {
-    const notes = await Note.find().sort({ createdAt: -1 });
+    const notes = await Note.find({user: req.user.id}).sort({ createdAt: -1 });
     res.status(200).json({ count: notes.length, notes });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -32,6 +32,7 @@ const searchNotes = async(req,res)=>{
         const safeWord = q.repace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
         const notes = await Note.find({
+            user:req.user.id,
             $or:[
                 {title:{$regex: safeWord,$options:i}},
                 {content:{$regex: safeWord,$options:i}},
@@ -54,7 +55,7 @@ const updateNote=async (req,res)=>{
         }
 
         const note = await Note.findByIdAndUpdate(
-            id,
+            {_id:id,user:req.user.id},
             {title,content},
             {new: true, runValidators: true}
         );
@@ -78,7 +79,7 @@ const deleteNote = async(req,res)=>{
             return res.status(404).json({message:"Invalid note id"});
         }
 
-        const note = await Note.findByIdAndDelete(id);
+        const note = await Note.findByIdAndDelete({_id:id,user:req.user.id});
         if(!note){
             return res.status(404).json({message:"Note not found"});
         }
